@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三栏布局</title>
+    <style>
+        /* 法一：flex布局  中间一栏flex：1   略...*/
+        /* 法二：定位布局 左右两边绝对定位  中间*/
+        *{
+            margin: 0;          /* 一定要清除边距 */
+            padding: 0;
+        }
+        .l{
+            position: absolute;
+            left: 0;
+            top: 0;                 /* 一定要top为 0 */
+            width: 100px;
+            height: 300px;
+            background-color: rgb(91, 22, 22);
+        }
+        .r{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 300px;
+            background-color: rgb(113, 18, 154);
+        }
+        .m{
+            margin-right: 200px;
+            margin-left: 100px;
+            height: 200px;
+            background-color: rgb(56, 187, 47);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="r">1</div>
+    <div class="l">2</div>
+    <div class="m">3</div>
+</body>
+</html>
