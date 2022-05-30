@@ -1,0 +1,30 @@
+<script>
+    //call的实现思路
+    //我们希望把bar里的this指向foo；那我们把bar放进foo里面能实现这个效果
+    var obj = {
+        value: 1,
+        fun: function () {   //当然不能是箭头
+            console.log(this.value)
+        }
+    }
+    obj.fun(); // 1
+
+
+    Function.prototype.myCall = function (obj, ...args) {
+        obj = obj ? obj : window          // 判断 obj 是否传入，如果未传入则设置为 window
+        obj.fn = this                     // 将this函数设为对象的方法
+        let result = obj.fn(...args)      // 调用函数
+        delete obj.fn                     // 将属性删除
+        return result
+    }
+
+    var value = 0                       //测试
+    let obj1 = { value: 1 }
+    function fn(name) {
+        console.log(this.value, name);
+    }
+
+    fn.call();               // 0 undefined
+    fn.myCall(obj1, 'wzk')   // 1 'wzk'
+
+</script>
