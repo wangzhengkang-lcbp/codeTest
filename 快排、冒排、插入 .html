@@ -1,0 +1,48 @@
+<script>
+//快速排序
+    Array.prototype.quickSort = function () {
+        let sort = (arr) => {
+            if (arr.length <= 1) return arr   //递归要有返回值、递归出口 不能等于1 要<=1
+            
+            let right = [], left = [], key = arr.shift()    //取首项
+            arr.forEach(value => {
+                if (value >= key) right.push(value)
+                else left.push(value)
+            })
+            return sort(left).concat(key, sort(right))  //递归入口
+        }
+        // this不能直接赋值,对象的部分属性可以赋值,所以最后做覆盖处理
+        this.splice(0, this.length, ...sort(this)) //记得写扩展符
+    }
+    let arr1 = [3, 2, 1, 4]
+    arr1.quickSort()
+    console.log(arr1);
+
+
+//冒泡排序
+    Array.prototype.pubbleSort = function() {
+        for(let i = 0; i < this.length-1; i++) {
+            for(let j = 1; j <= this.length-1-i; j++) { //length-1-i
+                if(this[j-1] > this[j]) [this[j],this[j-1]] = [this[j-1],this[j]]
+            }
+        }
+    }
+    let arr2 = [3, 2, 1, 4]
+    arr2.pubbleSort()
+    console.log(arr2);
+
+
+//插入排序
+Array.prototype.insertSort = function() {
+        for(let i = 1; i < this.length; i++) {    //从第二个开始
+            for(let j = i; j >= 1; j--) {
+                if(this[j] < this[j-1]) [this[j-1],this[j]] = [this[j],this[j-1]]
+                else break
+            }
+        }
+    }
+    let arr3 = [3, 2, 1, 4]
+    arr3.insertSort()
+    console.log(arr3);
+    
+</script>
