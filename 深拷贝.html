@@ -1,0 +1,44 @@
+<script>
+  // let newObj = JSON.parse(JSON.stringify(obj)) //缺点 不可以拷贝function函数
+
+
+  //普通对象的深拷贝
+  // function deepCopy(obj){
+  //     let newObj = {}
+  //     for(let i in obj){
+  //         if(obj[i] instanceof Object){
+  //             newObj[i] = deepCopy(obj[i])
+  //         }else{
+  //             newObj[i] = obj[i]
+  //         }
+  //     }
+  //     return newObj
+  // }
+
+
+  //对象或数组+函数的深复制
+  function deepCope(obj_arr) {
+    let res = Array.isArray(obj_arr) ? [] : {}
+    for (let i in obj_arr) {
+      if (typeof obj_arr[i] === "function") res[i] = new Function('return ' + obj_arr[i].toString())()
+      else if (typeof obj_arr[i] === "object") res[i] = deepCope(obj_arr[i])
+      else res[i] = obj_arr[i]
+    }
+    return res
+  }
+
+  //测试
+  let arr = [1, [1, 2, 3], { value: 100, obj: { age: 18 } }, function a() { }]
+  let newVal = deepCope(arr)
+
+  console.log("old", arr);
+  console.log("new", newVal);
+  console.log(newVal === arr, newVal[3] === arr[3]);
+
+
+//函数的深复制+
+// else if(obj_arr[i] instanceof Function){
+//   res[i] = new Function('return '+ obj_arr[i].toString())()  //法一
+//   // res[i] = obj_arr[i].bind(res);      //法二
+// }
+</script>
