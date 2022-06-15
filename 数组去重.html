@@ -1,0 +1,17 @@
+<script>
+    //数组去重
+    Array.prototype.resetArr = function () {
+        let newArr = []
+        this.forEach((val) => {
+            if (newArr.indexOf(val) === -1) {
+                newArr.push(val)
+            }
+        })
+        this.splice(0, this.length, ...newArr)
+    }
+
+    let arr = [1, 2, 3, 3, 4, 4]
+    console.log(arr);
+    arr.resetArr()
+    console.log(arr);  //[1,2,3,4]
+</script>
