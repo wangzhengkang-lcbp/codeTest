@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div,p{
+            width: 100px;
+            height: 100px;
+        }
+        div{
+            perspective: 1000px; /*父级设置景深*/
+        }
+        p{
+            background-color: blue;
+            border-radius: 50%;
+            animation:wzk 2s linear infinite;
+        }
+        @keyframes wzk{
+            50%{
+                transform: rotateY(180deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <p></p>
+    </div>
+</body>
+</html>
