@@ -1,0 +1,16 @@
+<script>
+//原生ajax
+    // XHR.setRequestHeader("Accept", "application/json");
+    
+    //拿起电话、拨打电话、说话、听对方说话
+    let XHR = new XMLHttpRequest()
+    XHR.open("GET","url")   //第三个参数默认是true是异步  false是同步
+    XHR.send()
+    XHR.onload = function() {
+      if(XHR.status === 200){
+        console.log(JSON.parse(XHR.responseText));
+      }else {
+        console.log(XHR.statusText);
+      }
+    }
+</script>
