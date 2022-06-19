@@ -1,0 +1,27 @@
+<script>
+  // 思路：通过Promise.race和异步函数
+  async function promiseLimit (urls, limit, requestFn) {
+    let allPromise = []//存放所有promise实例
+    let pool = [] //并发池
+    for (let url of urls) {
+      if (pool.length >= limit) await Promise.race(pool)
+      let curReq = Promise.resolve(requestFn(url))  //如果非promise 则转成promise
+      pool.push(curReq)
+      allPromise.push(curReq)
+      curReq.then(() => pool.splice(pool.indexOf(curReq), 1))
+    }
+    return Promise.all(allPromise)
+  }
+
+  // 请求地址
+  let urls = ['bytedance.com', 'tencent.com', 'alibaba.com', 'microsoft.com', 'apple.com', 'hulu.com', 'amazon.com']
+
+  //自定义请求函数
+  let request = (url) => {
+    return new Promise(resolve => {
+      setTimeout(() => resolve(`任务${url}完成`), 1000)
+    })
+  }
+
+  promiseLimit(urls, 3, request).then(res => console.log(res))
+</script>
