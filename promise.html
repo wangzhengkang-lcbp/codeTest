@@ -1,0 +1,107 @@
+<script>
+  class MPromise {
+    constructor(exector) {
+      //定义状态，有三种分别为 pending,fulfilled,rejected 等待 执行成功 执行失败
+      this.status = 'pending'
+      let self = this
+      this.rejectArgs = [] //reject回调的参数
+      this.resolveArgs = []  //resolve回调的参数
+      this.resolveCallBack = [] //执行resolve回调的数组
+      this.rejectCallBack = []  //执行reject回调的数组
+
+      function resolve (...arg) {
+        self.resolveArgs = arg
+        self.status = 'fulfilled'
+        self.resolveCallBack.forEach((fn) => {
+          fn(...self.resolveArgs)
+        })
+      }
+
+      function reject (...arg) {
+        self.rejectArgs = arg
+        self.status = 'rejected'
+        self.rejectCallBack.forEach((fn) => {
+          fn(...self.rejectArgs)
+        })
+      }
+
+      exector(resolve, reject)
+    }
+
+    then (onResolve, onReject) {
+      typeof onResolve == 'function' ? '' : onResolve = function (data) {
+        resolve(data)
+      }
+      typeof onReject == 'function' ? '' : onReject = function (err) {
+        throw err
+      }
+      if (this.status == 'pending') {
+        return new MPromise((resolve, reject) => {
+          this.rejectCallBack.push(() => {
+            let t = onReject(...this.rejectArgs)
+            if (t instanceof MPromise) {
+              t.then(resolve, reject)
+            } else {
+              resolve(t)
+            }
+          })
+          this.resolveCallBack.push(() => {
+            let t = onResolve(...this.resolveArgs)
+            if (t instanceof MPromise) {
+              t.then(resolve, reject)
+            } else {
+              resolve(t)
+            }
+          })
+        })
+      }
+      if (this.status == 'fulfilled') {
+        return new MPromise((resolve, reject) => {
+          try {
+            let t = onResolve(...this.resolveArgs)
+            if (t instanceof MPromise) {
+              t.then(resolve, reject)
+            } else {
+              resolve(t)
+            }
+          } catch (err) {
+            reject(err)
+          }
+        })
+      }
+      if (this.status == 'rejected') {
+        return new MPromise((resolve, reject) => {
+          try {
+            let t = onReject(...this.rejectArgs)
+            if (t instanceof MPromise) {
+              t.then(resolve, reject)
+            } else {
+              resolve(t)
+            }
+          } catch (err) {
+            reject(err)
+          }
+        })
+      }
+    }
+  }
+
+  let d = new MPromise((resolve, reject) => {
+    resolve(3, 4)
+  })
+
+  d.then((n1, n2) => {
+    console.log(n1, n2)
+    let c = new MPromise((resolve, reject) => {
+      setTimeout(() => {
+        reject('c')
+      }, 2000)
+    })
+    return c
+  }).then((n1) => {
+    console.log(n1)
+  }, (n2) => {
+    console.log('error')
+    console.log(n2)
+  })
+</script>
