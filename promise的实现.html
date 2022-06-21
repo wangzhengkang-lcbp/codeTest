@@ -1,0 +1,93 @@
+<script>
+  class MyPromise {
+    constructor(executor) {
+      this.status = 'pending' // 初始化状态为pending
+      this.value = undefined  // 记录起来方便传给then回调中的参数
+      this.reason = undefined
+      // 存储then中传入的参数、至于为什么是数组呢？因为同一个Promise的then方法可以调用多次
+      this.callbacks = []
+      //执行创建promise的回调 这里绑定this是为了防止执行时this的指向改变
+      executor(this.resolve.bind(this), this.reject.bind(this))
+    }
+
+    resolve (value) {
+      // 当value是一个MyPromise时
+      // 说明当前Promise肯定不会是第一个Promise、而是后续then方法返回的Promise（第二个Promise）
+      // 此时我们要获取的是该（value）MyPromise中的value值
+      // 怎样将value的value值获取到呢，可以将传递一个函数作为value.then的onResolved参数
+      // 那么在value的内部则会执行这个函数，我们只需要将当前Promise的value值赋值为value的value即可
+      if (value instanceof MyPromise) {
+        return value.then(
+          this.resolve.bind(this), //要绑定this
+          this.reject.bind(this)
+        )
+      }
+
+      this.value = value
+      this.status = 'resolved' // 将状态设置为成功
+
+      // 通知事件执行
+      this.callbacks.forEach(cb => this.handler(cb))
+    }
+
+    reject (reason) {
+      if (reason instanceof MyPromise) {
+        return reason.then(
+          this.resolve.bind(this),
+          this.reject.bind(this)
+        )
+      }
+
+      this.reason = reason
+      this.status = 'rejected' // 将状态设置为失败
+
+      this.callbacks.forEach(cb => this.handler(cb))
+    }
+
+    //then方法在resolve或者reject执行之后才会执行，并且then方法中的值是传给resolve或reject的参数
+    //换句话说，这个过程有点类似于发布订阅者模式：
+    //我们使用then来订阅事件，在resolve方法执行或者reject方法执行时发布消息。
+    then (onResolved, onRejected) {
+      // 返回一个新的Promise
+      return new MyPromise((nextResolve, nextReject) => {
+        // 这里之所以把下一个Promsie的resolve函数和reject函数也存在callback中
+        // 是为了将onResolved的执行结果通过nextResolve传入到下一个Promise作为它的value值
+        this.handler({
+          nextResolve,
+          nextReject,
+          onResolved,
+          onRejected
+        })
+      })
+    }
+
+    handler (callback) {
+      const { onResolved, onRejected, nextResolve, nextReject } = callback
+
+      if (this.status === 'pending') {
+        this.callbacks.push(callback)
+        return
+      }
+
+      if (this.status === 'resolved') {
+        const nextValue = onResolved ? onResolved(this.value) : this.value
+        return nextResolve(nextValue)
+      }
+
+      if (this.status === 'rejected') {
+        const nextReason = onRejected ? onRejected(this.reason) : this.reason
+        return nextReject(nextReason)
+      }
+    }
+  }
+
+  //测试用例
+  new MyPromise((resolve, reject) => {
+    setTimeout(() => resolve(18), 1000)
+  }).then(res => {
+    return new MyPromise((resolve, reject) => {
+      console.log(res)
+      setTimeout(() => resolve(res + 18), 1000)
+    })
+  }).then(res => console.log(res))
+</script>
