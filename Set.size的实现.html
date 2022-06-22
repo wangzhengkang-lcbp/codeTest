@@ -1,0 +1,36 @@
+<script>
+    //Set中的size属性
+    function Myset() {
+        this.arr = []
+    }
+    Myset.prototype = {
+        add(x) {
+            this.arr.push(x)
+            this.size++
+            return this.size
+        },
+        delete() {
+            this.arr.pop()
+            this.size--
+            return this.size
+        },
+        get size() {  //size是只读属性 不可改写
+            return this.arr.length
+        },
+        set size(val) {
+            return val
+        }
+    }
+
+    let a = new Myset()
+    console.log(Object.getOwnPropertyDescriptors(a.__proto__));
+// a.add(1)
+// a.add(2)
+// console.log(a.size);             //2
+// a.delete(2)
+// console.log(a.size);             //1
+// console.log(a.size = 100);       //100
+// console.log(a.size);             //1
+// console.log(a);                  //{arr: [1]}
+
+</script>
