@@ -1,0 +1,20 @@
+<script>
+    // domain: "localhost",
+    // path: '/',
+    // maxAge: 36e5,
+    // httpOnly: false,
+    // overwrite: false
+
+    escape()//对字符串编码
+    unescape//解码
+
+    function setCookie(key,value,expiredays){
+        date_ = new Date()//GMT中国标准时间实例对象
+        date_.setDate(date_.getDate() + expiredays)//设置expiredays后的时间
+        date_ = date_.toGMTString()//返回的是字符（将Date对象转字符串）
+        document.cookie = key + "=" + escape(value) + ((expiredays == null) ? "" : ";expires=" + date_)
+        //字段中还可以设置 path=/  demain=baidu.com  secure   expires接收的是GMT的字符格式
+    }
+    setCookie("username","wzk",30)
+    console.log(document.cookie.get);
+</script>
